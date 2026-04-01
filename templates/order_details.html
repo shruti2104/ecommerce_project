@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Order #{{ order.id }}</h2>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Product</th>
+        <th>Price (at purchase)</th>
+        <th>Quantity</th>
+        <th>Subtotal</th>
+    </tr>
+
+    {% for item in products %}
+    <tr>
+        <td>{{ item.name }}</td>
+        <td>₹ {{ item.order_price }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>₹ {{ item.subtotal }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h3>Total: ₹ {{ total }}</h3>
+
+{% endblock %}

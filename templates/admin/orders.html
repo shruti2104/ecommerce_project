@@ -1,0 +1,9 @@
+<h2>All Orders</h2>
+
+{% for o in orders %}
+<div>
+    Order #{{ o.id }} |
+    User: {{ o.email }} |
+    Total: ₹{{ o.total_amount }}
+</div>
+{% endfor %}
