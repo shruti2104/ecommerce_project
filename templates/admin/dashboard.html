@@ -1,5 +1,32 @@
-<h2>Admin Dashboard</h2>
+{% extends "base.html" %}
 
-<a href="/admin/products">Manage Products</a><br>
-<a href="/admin/add-product">Add Product</a><br>
-<a href="/admin/orders">View Orders</a>
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+
+<div class="admin-container">
+
+    <h2 class="admin-title">Admin Dashboard</h2>
+
+    <div class="admin-cards">
+
+        <a href="/admin/products" class="admin-card">
+            <h3>📦 Manage Products</h3>
+            <p>Edit, delete, and view all products</p>
+        </a>
+
+        <a href="/admin/add-product" class="admin-card">
+            <h3>➕ Add Product</h3>
+            <p>Add new items to your store</p>
+        </a>
+
+        <a href="/admin/orders" class="admin-card">
+            <h3>🧾 View Orders</h3>
+            <p>Track and manage customer orders</p>
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,35 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>My E-Commerce Store</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-<h1>My Store</h1>
+<header class="navbar">
+    <div class="logo">MyStore</div>
 
-<nav>
-    <a href="/">Home</a> |
-    <a href="/products">Products</a> |
-    <a href="/cart">Cart</a> |
-    <a href="/orders">Orders</a> |
-    {% if session.get('user_id') %}
-        Hello, {{ session.get('user_name') }} |
-        <a href="/logout">Logout</a>
-    {% else %}
-        <a href="/login">Login</a> |
-        <a href="/register">Register</a>
-    {% endif %}
-</nav>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+        <a href="/cart">Cart</a>
+        <a href="/orders">Orders</a>
+    </nav>
 
-<hr>
+    <div class="auth">
+        {% if session.get('user_id') %}
+            <span>Hello, {{ session.get('user_name') }}</span>
+            <a href="/logout" class="btn-outline">Logout</a>
+        {% else %}
+            <a href="/login">Login</a>
+            <a href="/register" class="btn">Register</a>
+        {% endif %}
+    </div>
+</header>
 
-{% block content %}
-{% endblock %}
-
-<hr>
+<main class="container">
+    {% block content %}
+    {% endblock %}
+</main>
 
 <footer>
-    <p>My Store © 2026</p>
+    <p>© 2026 My Store</p>
 </footer>
 
 </body>

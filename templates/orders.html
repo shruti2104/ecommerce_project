@@ -2,15 +2,31 @@
 
 {% block content %}
 
-<h2>Your Orders</h2>
+<h2 class="page-title">Your Orders</h2>
 
-{% for order in orders %}
-<div>
-    <a href="/order/{{ order.id }}">
-        Order #{{ order.id }}
-    </a>
-    | Total: {{ order.total_amount }}
+<div class="orders-container">
+    {% for order in orders %}
+    <div class="order-card">
+        
+        <div class="order-top">
+            <div>
+                <p class="order-id">Order #{{ order.id }}</p>
+                <p class="order-date">Placed recently</p>
+            </div>
+
+            <div class="order-amount">
+                ₹ {{ order.total_amount }}
+            </div>
+        </div>
+
+        <div class="order-actions">
+            <a href="/order/{{ order.id }}">
+                <button class="view-btn">View Details</button>
+            </a>
+        </div>
+
+    </div>
+    {% endfor %}
 </div>
-{% endfor %}
 
 {% endblock %}

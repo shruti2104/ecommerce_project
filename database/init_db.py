@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS products (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     price REAL NOT NULL,
-    description TEXT
+    description TEXT,
+    image_url TEXT
 )
 """)
 # cursor.execute("INSERT INTO products (name, price, description) VALUES ('Laptop', 800, 'Powerful laptop')")

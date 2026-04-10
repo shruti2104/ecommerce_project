@@ -1,9 +1,35 @@
-<h2>All Orders</h2>
+{% extends "base.html" %}
 
-{% for o in orders %}
-<div>
-    Order #{{ o.id }} |
-    User: {{ o.email }} |
-    Total: ₹{{ o.total_amount }}
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+
+<div class="admin-container">
+
+    <h2 class="admin-title">All Orders</h2>
+
+    <div class="table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>User Email</th>
+                    <th>Total Amount</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for o in orders %}
+                <tr>
+                    <td>#{{ o.id }}</td>
+                    <td>{{ o.email }}</td>
+                    <td class="amount">₹{{ o.total_amount }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
 </div>
-{% endfor %}
+
+{% endblock %}

@@ -2,13 +2,44 @@
 
 {% block content %}
 
-<h2>{{ product[1] }}</h2>
+<div class="product-page">
 
-<p><strong>Price:</strong> ₹ {{ product[2] }}</p>
-<p>{{ product[3] }}</p>
+    <!-- Left: Image -->
+    <div class="product-left">
+        <img src="{{ product[4] if product|length > 4 else url_for('static', filename='images/no-image.png') }}">
+    </div>
 
-<form action="/add-to-cart/{{ product[0] }}" method="POST">
-    <button type="submit">Add to Cart</button>
-</form>
+    <!-- Right: Details -->
+    <div class="product-right">
+
+        <h2 class="product-title">{{ product[1] }}</h2>
+
+        <div class="rating">
+            ⭐⭐⭐⭐☆
+            <span>(120 ratings)</span>
+        </div>
+
+        <div class="price-box">
+            <span class="current-price">₹ {{ product[2] }}</span>
+            <span class="old-price">₹ {{ product[2] + 500 }}</span>
+            <span class="discount">-20%</span>
+        </div>
+
+        <p class="product-desc">
+            {{ product[3] }}
+        </p>
+
+        <!-- Actions -->
+        <div class="product-actions">
+            <form action="/add-to-cart/{{ product[0] }}" method="POST">
+                <button type="submit" class="cart-btn big-btn">Add to Cart</button>
+            </form>
+
+            <button class="buy-btn">Buy Now</button>
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}

@@ -2,40 +2,67 @@
 
 {% block content %}
 
-<h2>Your Cart</h2>
+<h2 class="page-title">Your Cart</h2>
 
 {% if products %}
-    <form method="POST" action="/checkout">
-        <button type="submit">Checkout</button>
-    </form>
-    <table border="1" cellpadding="10">
-        <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Qty</th>
-            <th>Subtotal</th>
-            <th>Action</th>
-        </tr>
+
+<div class="cart-container">
+
+    <!-- LEFT: Cart Items -->
+    <div class="cart-items">
 
         {% for product in products %}
-        <tr>
-            <td>{{ product.name }}</td>
-            <td>₹ {{ product.price }}</td>
-            <td>{{ product.quantity }}</td>
-            <td>₹ {{ product.subtotal }}</td>
-            <td>
-                <form action="/remove-from-cart/{{ product.id }}" method="POST">
-                    <button type="submit">Remove</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+        <div class="cart-item">
 
-    <h3>Total: ₹ {{ final_total }}</h3>
+            <!-- Image -->
+            <div class="cart-image">
+                <img src="{{ product.image if product.image else url_for('static', filename='images/no-image.png') }}">
+            </div>
+
+            <!-- Details -->
+            <div class="cart-details">
+                <h3>{{ product.name }}</h3>
+                <p class="price">₹ {{ product.price }}</p>
+
+                <p class="qty">Qty: {{ product.quantity }}</p>
+
+                <p class="subtotal">Subtotal: ₹ {{ product.subtotal }}</p>
+
+                <form action="/remove-from-cart/{{ product.id }}" method="POST">
+                    <button class="remove-btn">Remove</button>
+                </form>
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <!-- RIGHT: Summary -->
+    <div class="cart-summary">
+
+        <h3>Order Summary</h3>
+
+        <p>Total Items: {{ products|length }}</p>
+        <p class="total">Total: ₹ {{ final_total }}</p>
+
+        <form method="POST" action="/checkout">
+            <button class="checkout-btn">Proceed to Checkout</button>
+        </form>
+
+    </div>
+
+</div>
 
 {% else %}
-    <p>Your cart is empty.</p>
+
+<div class="empty-cart">
+    <h3>Your cart is empty 🛒</h3>
+    <a href="/products">
+        <button class="shop-btn">Shop Now</button>
+    </a>
+</div>
+
 {% endif %}
 
 {% endblock %}
