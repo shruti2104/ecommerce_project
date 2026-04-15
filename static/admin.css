@@ -208,3 +208,93 @@
 .admin-btn:hover {
     background: #1e272e;
 }
+
+/* Form Card */
+.admin-form-card {
+    max-width: 500px;
+    margin: auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+/* Form Layout */
+.admin-form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Form Group */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 6px;
+    display: block;
+}
+
+/* Inputs */
+.admin-form input,
+.admin-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+/* Focus Effect */
+.admin-form input:focus,
+.admin-form textarea:focus {
+    border-color: #0984e3;
+    outline: none;
+}
+
+/* Button */
+.admin-btn {
+    padding: 12px;
+    background: #0984e3;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.admin-btn:hover {
+    background: #0652dd;
+}
+
+/* Wrapper */
+.admin-wrapper {
+    padding: 20px;
+}
+
+/* Topbar */
+.admin-topbar {
+    margin-bottom: 20px;
+}
+
+/* Dashboard Button */
+.admin-dashboard-btn {
+    text-decoration: none;
+    background: #2f3640;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.admin-dashboard-btn:hover {
+    background: #1e272e;
+}
+
+/* Content */
+.admin-content {
+    margin-top: 10px;
+}

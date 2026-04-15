@@ -1,35 +1,29 @@
-{% extends "base.html" %}
+{% extends "admin/admin_base.html" %}
 
-{% block content %}
+{% block admin_content %}
 
-<link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+<h2 class="admin-title">All Orders</h2>
 
-<div class="admin-container">
+<div class="table-wrapper">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>User Email</th>
+                <th>Total Amount</th>
+            </tr>
+        </thead>
 
-    <h2 class="admin-title">All Orders</h2>
-
-    <div class="table-wrapper">
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>Order ID</th>
-                    <th>User Email</th>
-                    <th>Total Amount</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {% for o in orders %}
-                <tr>
-                    <td>#{{ o.id }}</td>
-                    <td>{{ o.email }}</td>
-                    <td class="amount">₹{{ o.total_amount }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
+        <tbody>
+            {% for o in orders %}
+            <tr>
+                <td>#{{ o.id }}</td>
+                <td>{{ o.email }}</td>
+                <td class="amount">₹{{ o.total_amount }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 {% endblock %}

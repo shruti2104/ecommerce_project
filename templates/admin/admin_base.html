@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+
+<div class="admin-wrapper">
+
+    <!-- Top Admin Bar -->
+    <div class="admin-topbar">
+        <a href="/admin" class="admin-dashboard-btn">← Dashboard</a>
+    </div>
+
+    <!-- Page Content -->
+    <div class="admin-content">
+        {% block admin_content %}
+        {% endblock %}
+    </div>
+
+</div>
+
+{% endblock %}

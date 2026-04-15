@@ -65,7 +65,7 @@ def add_product():
             connection.commit()
             connection.close()
             return redirect(url_for('main.products'))
-    return render_template("add_product.html")
+    return render_template("admin/add_product.html")
 
 @main.route('/delete-product/<int:id>', methods=['POST'])
 @login_required
@@ -80,7 +80,7 @@ def delete_product(id):
 
     return redirect(url_for('main.products'))
 
-@main.route('/edit-product/<int:id>', methods=['GET', 'POST'])
+@main.route('/admin/edit-product/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_product(id):
     from database.db import get_connection
@@ -105,7 +105,7 @@ def edit_product(id):
         cursor.execute("SELECT * FROM products WHERE id = ?", (id,))
         product = cursor.fetchone()
         connection.close()
-        return render_template("edit_product.html",product=product)
+        return render_template("admin/edit_product.html",product=product)
     return redirect(url_for('main.products'))
 
 @main.route('/product/<int:id>')
@@ -334,7 +334,7 @@ def forgot_password():
 
             connection.commit()
 
-            reset_link = f"http://127.0.0.1:5000/reset-password/{token}"
+            reset_link = f"http://127.0.0.1:8080/reset-password/{token}"
 
         connection.close()
 
