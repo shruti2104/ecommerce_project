@@ -379,12 +379,59 @@ def reset_password(token):
 @main.route('/checkout', methods=['POST'])
 @login_required
 def checkout():
-    order_id = create_order(session['user_id'])
+    # order_id = create_order(session['user_id'])
 
-    if not order_id:
-        return "Cart is empty"
+    if 'user_id' in session:
+        from database.db import get_connection
 
-    return redirect(url_for('main.orders'))
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT p.*, c.quantity
+            FROM cart c
+            JOIN products p ON c.product_id = p.id
+            WHERE c.user_id = ?
+        """, (session['user_id'],))
+
+        items = cursor.fetchall()
+        conn.close()
+
+    # ✅ Guest → session
+    else:
+        items = []
+
+        if 'cart' in session:
+            from database.db import get_connection
+            conn = get_connection()
+            cursor = conn.cursor()
+
+            for item in session['cart']:
+                cursor.execute(
+                    "SELECT * FROM products WHERE id = ?",
+                    (item['product_id'],)
+                )
+                product = cursor.fetchone()
+
+                if product:
+                    product = dict(product)
+                    product['quantity'] = item['qty']
+                    items.append(product)
+
+            conn.close()
+
+    # Common processing
+    products = []
+    final_total = 0
+
+    for item in items:
+        item = dict(item)
+        item['subtotal'] = item['price'] * item['quantity']
+        final_total += item['subtotal']
+        products.append(item)
+    return render_template("checkout.html", products=products, final_total=final_total)
+
+    # return redirect(url_for('main.orders'))
 
 @main.route('/orders')
 @login_required
@@ -458,3 +505,16 @@ def admin_products():
     conn.close()
 
     return render_template('admin/products.html', products=products)
+
+@app.route('/create_order', methods=['POST'])
+def create_order():
+    data = request.json
+    amount = int(float(data['amount']) * 100)  # convert to paise
+
+    order = current_app.razorpay_client.order.create({
+        "amount": amount,
+        "currency": "INR",
+        "payment_capture": 1
+    })
+
+    return jsonify(order)

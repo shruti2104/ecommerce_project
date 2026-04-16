@@ -1,0 +1,103 @@
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="page-title">Your Cart</h2>
+
+{% if products %}
+
+<div class="cart-container">
+
+    <!-- LEFT: Cart Items -->
+    <div class="cart-items">
+
+        {% for product in products %}
+        <div class="cart-item">
+
+            <!-- Image -->
+            <div class="cart-image">
+                <img src="{{ product.image if product.image else url_for('static', filename='images/no-image.png') }}">
+            </div>
+
+            <!-- Details -->
+            <div class="cart-details">
+                <h3>{{ product.name }}</h3>
+                <p class="price">₹ {{ product.price }}</p>
+
+                <p class="qty">Qty: {{ product.quantity }}</p>
+
+                <p class="subtotal">Subtotal: ₹ {{ product.subtotal }}</p>
+
+                <form action="/remove-from-cart/{{ product.id }}" method="POST">
+                    <button class="remove-btn">Remove</button>
+                </form>
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <!-- RIGHT: Summary -->
+    <div class="cart-summary">
+
+        <h3>Order Summary</h3>
+
+        <p>Total Items: {{ products|length }}</p>
+        <p class="total">Total: ₹ {{ final_total }}</p>
+
+        <button id="pay-btn">Pay Now</button>
+
+    </div>
+
+</div>
+{% endif %}
+
+{% endblock %}
+
+<script>
+document.getElementById("pay-btn").onclick = function () {
+
+    fetch("/create_order", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            amount: "{{ total_amount }}"
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        var options = {
+            "key": "{{ config['RAZORPAY_KEY_ID'] }}",
+            "amount": data.amount,
+            "currency": "INR",
+            "name": "My Store",
+            "description": "Order Payment",
+            "order_id": data.id,
+
+            "handler": function (response){
+                fetch("/verify_payment", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(response)
+                })
+                .then(res => res.json())
+                .then(data => {
+                    alert("Payment Successful!");
+                    window.location.href = "/orders";
+                });
+            }
+        };
+
+        var rzp = new Razorpay(options);
+        rzp.open();
+    });
+};
+</script>
