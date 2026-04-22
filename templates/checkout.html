@@ -1,8 +1,8 @@
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
 {% extends "base.html" %}
 
 {% block content %}
+
+<script src="https://js.stripe.com/v3/"></script>
 
 <h2 class="page-title">Your Cart</h2>
 
@@ -48,56 +48,34 @@
         <p>Total Items: {{ products|length }}</p>
         <p class="total">Total: ₹ {{ final_total }}</p>
 
-        <button id="pay-btn">Pay Now</button>
+        <button id="checkout-button" class="pay-btn">Proceed to Pay</button>
 
     </div>
 
 </div>
+
+{% else %}
+<p>Your cart is empty.</p>
 {% endif %}
 
-{% endblock %}
-
 <script>
-document.getElementById("pay-btn").onclick = function () {
+const stripe = Stripe("{{ config['STRIPE_PUBLIC_KEY'] }}");
 
-    fetch("/create_order", {
+document.getElementById("checkout-button").addEventListener("click", function () {
+    fetch("/create-checkout-session", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            amount: "{{ total_amount }}"
-        })
     })
     .then(res => res.json())
     .then(data => {
-
-        var options = {
-            "key": "{{ config['RAZORPAY_KEY_ID'] }}",
-            "amount": data.amount,
-            "currency": "INR",
-            "name": "My Store",
-            "description": "Order Payment",
-            "order_id": data.id,
-
-            "handler": function (response){
-                fetch("/verify_payment", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(response)
-                })
-                .then(res => res.json())
-                .then(data => {
-                    alert("Payment Successful!");
-                    window.location.href = "/orders";
-                });
-            }
-        };
-
-        var rzp = new Razorpay(options);
-        rzp.open();
-    });
-};
+        return stripe.redirectToCheckout({ sessionId: data.id });
+    })
+    .then(result => {
+        if (result.error) {
+            alert(result.error.message);
+        }
+    })
+    .catch(error => console.error("Error:", error));
+});
 </script>
+
+{% endblock %}

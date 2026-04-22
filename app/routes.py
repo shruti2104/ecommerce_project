@@ -1,8 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session #, g
+from flask import Blueprint, current_app, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from datetime import datetime, timedelta
-from app.services.cart_service import add_to_cart_db, remove_cart_item
+from app.services.cart_service import add_to_cart_db, remove_cart_item, get_cart_items
 from app.services.order_service import create_order, get_order_details
 from app.services.account_service import verify_email_db
 from app.decorators import admin_required
@@ -11,6 +11,8 @@ import sqlite3
 import uuid
 import sys
 import os
+import stripe
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # @app.before_request
@@ -146,20 +148,8 @@ def add_to_cart(id):
 @main.route('/cart')
 def view_cart():
     if 'user_id' in session:
-        from database.db import get_connection
-
-        conn = get_connection()
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            SELECT p.*, c.quantity
-            FROM cart c
-            JOIN products p ON c.product_id = p.id
-            WHERE c.user_id = ?
-        """, (session['user_id'],))
-
-        items = cursor.fetchall()
-        conn.close()
+        user_id = session['user_id']
+        items = get_cart_items(user_id)
 
     # ✅ Guest → session
     else:
@@ -376,26 +366,13 @@ def reset_password(token):
     connection.close()
     return render_template('reset_password.html', token=token)
 
-@main.route('/checkout', methods=['POST'])
+@main.route('/checkout', methods=['GET'])
 @login_required
 def checkout():
-    # order_id = create_order(session['user_id'])
 
     if 'user_id' in session:
-        from database.db import get_connection
-
-        conn = get_connection()
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            SELECT p.*, c.quantity
-            FROM cart c
-            JOIN products p ON c.product_id = p.id
-            WHERE c.user_id = ?
-        """, (session['user_id'],))
-
-        items = cursor.fetchall()
-        conn.close()
+        user_id = session['user_id']
+        items = get_cart_items(user_id)
 
     # ✅ Guest → session
     else:
@@ -429,7 +406,10 @@ def checkout():
         item['subtotal'] = item['price'] * item['quantity']
         final_total += item['subtotal']
         products.append(item)
-    return render_template("checkout.html", products=products, final_total=final_total)
+    config={
+        "STRIPE_PUBLIC_KEY": current_app.config['STRIPE_PUBLIC_KEY']
+    }
+    return render_template("checkout.html", products=products, final_total=final_total, config=config)
 
     # return redirect(url_for('main.orders'))
 
@@ -506,15 +486,43 @@ def admin_products():
 
     return render_template('admin/products.html', products=products)
 
-@app.route('/create_order', methods=['POST'])
-def create_order():
-    data = request.json
-    amount = int(float(data['amount']) * 100)  # convert to paise
+@main.route('/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    stripe.api_key = current_app.config['STRIPE_SECRET_KEY']
+    print(stripe.api_key)
+    user_id = session['user_id']
+    try:
+        cart = get_cart_items(user_id)
 
-    order = current_app.razorpay_client.order.create({
-        "amount": amount,
-        "currency": "INR",
-        "payment_capture": 1
-    })
+        line_items = []
 
-    return jsonify(order)
+        for item in cart:
+            line_items.append({
+                'price_data': {
+                    'currency': 'inr',
+                    'product_data': {
+                        'name': item['name'],
+                    },
+                    'unit_amount': int(item['price'] * 100),  # Stripe uses paise
+                },
+                'quantity': item['quantity'],
+            })
+        print(line_items)
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=line_items,
+            mode='payment',
+            success_url=url_for('main.success', _external=True),
+            cancel_url=url_for('main.checkout', _external=True),
+        )
+
+        return jsonify({'id': checkout_session.id})
+
+    except Exception as e:
+        print("🔥 STRIPE ERROR:", e)
+        return jsonify(error=str(e)), 403
+
+@main.route('/success')
+def success():
+    order_id = create_order(session['user_id'])
+    return render_template('success.html', order_id)

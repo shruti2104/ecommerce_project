@@ -1,17 +1,15 @@
 from flask import Flask
-import razorpay
+from dotenv import load_dotenv
+
+import os
 
 def create_app():
-    app = Flask(__name__, template_folder='../templates', static_folder='../static') #Flask sometimes cannot automatically detect the templates folder unless it is explicitly defined.
+    app = Flask(__name__, template_folder='../templates', static_folder='../static')
+    app.secret_key = os.getenv("SECRET_KEY")
 
-    app.secret_key = "fw_py"
+    app.config.from_object('config.Config')
 
     from .routes import main
     app.register_blueprint(main)
-
-    app.razorpay_client = razorpay.Client(
-        auth=(app.config['RAZORPAY_KEY_ID'], app.config['RAZORPAY_KEY_SECRET'])
-    )
-
 
     return app
