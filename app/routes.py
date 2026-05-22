@@ -451,6 +451,25 @@ def order_details(order_id):
 def admin():
     return render_template('admin/dashboard.html')
 
+@main.route('/admin/users')
+@admin_required
+def admin_users():
+    from database.db import get_connection
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM users
+        ORDER BY id DESC
+    """)
+
+    users = cursor.fetchall()
+    conn.close()
+
+    return render_template('admin/admin_users.html', users=users)
+
 @main.route('/admin/orders')
 @admin_required
 def admin_orders():

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+
+<div class="admin-container">
+
+    <!-- Top Bar -->
+    <div class="admin-topbar">
+
+        <div>
+            <a href="/admin/dashboard" class="back-link">
+                ← Dashboard
+            </a>
+
+            <h2 class="admin-title">Manage Users</h2>
+        </div>
+
+        <a href="/admin/add-user" class="admin-btn">
+            + Add User
+        </a>
+
+    </div>
+
+    <!-- Users Table -->
+    <div class="table-wrapper">
+
+        <table class="admin-table">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for user in users %}
+                <tr>
+
+                    <td>{{ user.id }}</td>
+
+                    <td>{{ user.name }}</td>
+
+                    <td>{{ user.email }}</td>
+
+                    <td>
+                        <span class="role-badge">
+                            {% if user.is_admin == 1 %}
+                                Admin
+                            {% else %}
+                                Customer
+                            {% endif %}
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="role-badge">
+                            {% if user.is_verified == 1 %}
+                                Verified
+                            {% else %}
+                                Not Verified
+                            {% endif %}
+                        </span>
+                    </td>
+
+                    <td class="actions">
+
+                        <a href="/admin/edit-user/{{ user.id }}" class="edit-btn">
+                            Edit
+                        </a>
+
+                        <form action="/admin/delete-user/{{ user.id }}" method="POST">
+
+                            <button type="submit" class="delete-btn">
+                                Delete
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

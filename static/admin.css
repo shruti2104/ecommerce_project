@@ -298,3 +298,112 @@
 .admin-content {
     margin-top: 10px;
 }
+
+/* Topbar */
+.admin-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+/* Dashboard Link */
+.back-link {
+    text-decoration: none;
+    color: #0984e3;
+    font-size: 14px;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* Add Button */
+.admin-btn {
+    background: #0984e3;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.admin-btn:hover {
+    background: #0652dd;
+}
+
+/* Table */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.admin-table thead {
+    background: #2f3640;
+    color: white;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.admin-table tbody tr:hover {
+    background: #f8f9fb;
+}
+
+/* Role Badge */
+.role-badge {
+    background: #dfe6e9;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+}
+
+/* Actions */
+.actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Edit Button */
+.edit-btn {
+    background: #00b894;
+    color: white;
+    padding: 7px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.edit-btn:hover {
+    background: #019875;
+}
+
+/* Delete Button */
+.delete-btn {
+    background: #d63031;
+    color: white;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.delete-btn:hover {
+    background: #b71c1c;
+}
